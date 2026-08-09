@@ -2,31 +2,53 @@
 
 An interactive Streamlit web application for exploring 120 years of Olympic history — from medal tallies and country performance to athlete demographics and gender participation trends.
 
-🔗 **Live App:** [Add your Streamlit Cloud link here once deployed]
+🔗 **Live App:** [olympics-data-analysis-web-app-yvevfzrs6iemjsxnsbr7qb.streamlit.app](https://olympics-data-analysis-web-app-yvevfzrs6iemjsxnsbr7qb.streamlit.app/)
 📊 **Dataset:** [120 Years of Olympic History (Kaggle)](https://www.kaggle.com/heesoo37/120-years-of-olympic-history-athletes-and-results)
+
+## Author
+
+**Sayantan Sinha**
+B.E. in Information Technology | ML Enthusiast | Python Developer
+
+🔗 [GitHub](https://github.com/SayantanSinha03)
 
 ## Overview
 
-This app lets users interactively explore Olympic Games data across editions, countries, sports, and individual athletes. It combines data preprocessing, visualization, and an intuitive Streamlit interface to surface trends that would otherwise be buried in raw CSV data.
+This app lets users interactively explore Olympic Games data across editions, countries, sports, and individual athletes — turning ~270,000 rows of raw athlete-event data into filterable tables and interactive visualizations.
 
 ## Features
 
-- **Medal Tally** — Filter medal counts by year, country, or both
-- **Overall Analysis** — Key stats (editions, hosts, sports, events, athletes, nations), trends of participating nations/events/athletes over time, and a sport-vs-year heatmap of event growth
-- **Country-wise Analysis** — Year-by-year medal performance for a selected country, plus a heatmap of which sports that country excels in
-- **Athlete-wise Analysis** — Age distribution of medalists overall and by sport, height vs. weight scatter plots by sport, and a men vs. women participation trend over the years
+**🥇 Medal Tally**
+Filter medal counts by year, country, or both to see overall standings or how a specific nation performed.
+
+**📈 Overall Analysis**
+- Key stats: number of editions, host cities, sports, events, athletes, and participating nations
+- Trends of participating nations, events, and athletes over time
+- A sport-vs-year heatmap showing how the number of events per sport evolved
+- Most successful athletes, filterable by sport
+
+**🌍 Country-wise Analysis**
+- Year-by-year medal tally for a selected country
+- Heatmap of which sports that country performs best in
+- Top 10 athletes for the selected country
+
+**🏃 Athlete-wise Analysis**
+- Age distribution of medalists overall and by individual sport
+- Height vs. weight scatter plot by sport, colored by medal type
+- Men vs. women participation trends over the years
 
 ## Tech Stack
 
-- **Python**
-- **Streamlit** — web app framework
-- **Pandas / NumPy** — data preprocessing and aggregation
-- **Plotly** — interactive line charts and distribution plots
-- **Matplotlib / Seaborn** — heatmaps and scatter plots
+| Category | Tools |
+|---|---|
+| Language | Python |
+| Web Framework | Streamlit |
+| Data Processing | Pandas, NumPy |
+| Visualization | Plotly, Matplotlib, Seaborn, SciPy |
 
 ## How It Works
 
-Raw athlete-event and NOC-region datasets are merged and cleaned in `preprocessor.py`, with reusable aggregation logic (medal tallies, year-wise trends, country/sport breakdowns) handled in `helper.py`. `app.py` ties it together into a sidebar-driven Streamlit interface, so every chart and table updates dynamically based on user selections.
+Raw athlete-event and NOC-region datasets are merged and cleaned in `preprocessor.py`. Reusable aggregation logic — medal tallies, year-wise trends, country/sport breakdowns — lives in `helper.py`. `app.py` ties everything together into a sidebar-driven interface, so every chart and table updates dynamically based on user selections, without reloading the page.
 
 ## Run Locally
 
@@ -37,4 +59,16 @@ python -m venv venv
 .\venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 streamlit run app.py
+```
+
+## Project Structure
+
+```
+├── app.py              # Main Streamlit app and page routing
+├── helper.py            # Data aggregation and analysis functions
+├── preprocessor.py       # Data cleaning and merging
+├── requirements.txt      # Python dependencies
+├── runtime.txt           # Pinned Python version for deployment
+├── athlete_events.csv     # Raw dataset
+└── noc_regions.csv        # NOC-to-country mapping
 ```
