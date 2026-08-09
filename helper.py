@@ -12,13 +12,13 @@ def fetch_medal_tally(df, year, country):
     if year != 'Overall' and country == 'Overall':
         temp_df = medal_df[medal_df['Year'] == int(year)]
     if year != 'Overall' and country != 'Overall':
-        temp_df = medal_df[(medal_df['Year'] == year) & (medal_df['region'] == country)]
+        temp_df = medal_df[(medal_df['Year'] == int(year)) & (medal_df['region'] == country)]
 
     if flag == 1:
-        x = temp_df.groupby('Year').sum()[['Gold', 'Silver', 'Bronze']].sort_values('Year').reset_index()
+        x = temp_df.groupby('Year')[['Gold', 'Silver', 'Bronze']].sum().sort_values('Year').reset_index()
     else:
-        x = temp_df.groupby('region').sum()[['Gold', 'Silver', 'Bronze']].sort_values('Gold',
-                                                                                      ascending=False).reset_index()
+        x = temp_df.groupby('region')[['Gold', 'Silver', 'Bronze']].sum().sort_values(
+            'Gold', ascending=False).reset_index()
 
     x['total'] = x['Gold'] + x['Silver'] + x['Bronze']
 
@@ -39,12 +39,13 @@ def country_year_list(df):
     country.sort()
     country.insert(0, 'Overall')
 
-    return years,country
+    return years, country
 
-def data_over_time(df,col):
 
-    nations_over_time = df.drop_duplicates(['Year', col])['Year'].value_counts().reset_index().sort_values('index')
-    nations_over_time.rename(columns={'index': 'Edition', 'Year': col}, inplace=True)
+def data_over_time(df, col):
+    nations_over_time = df.drop_duplicates(['Year', col])['Year'].value_counts().reset_index()
+    nations_over_time.columns = ['Edition', col]
+    nations_over_time = nations_over_time.sort_values('Edition')
     return nations_over_time
 
 
@@ -54,23 +55,25 @@ def most_successful(df, sport):
     if sport != 'Overall':
         temp_df = temp_df[temp_df['Sport'] == sport]
 
-    x = temp_df['Name'].value_counts().reset_index().head(15).merge(df, left_on='index', right_on='Name', how='left')[
-        ['index', 'Name_x', 'Sport', 'region']].drop_duplicates('index')
-    x.rename(columns={'index': 'Name', 'Name_x': 'Medals'}, inplace=True)
+    x = temp_df['Name'].value_counts().reset_index().head(15)
+    x.columns = ['Name', 'Medals']
+    x = x.merge(df, on='Name', how='left')[['Name', 'Medals', 'Sport', 'region']].drop_duplicates('Name')
     return x
 
-def yearwise_medal_tally(df,country):
+
+def yearwise_medal_tally(df, country):
     temp_df = df.dropna(subset=['Medal'])
-    temp_df.drop_duplicates(subset=['Team', 'NOC', 'Games', 'Year', 'City', 'Sport', 'Event', 'Medal'], inplace=True)
+    temp_df = temp_df.drop_duplicates(subset=['Team', 'NOC', 'Games', 'Year', 'City', 'Sport', 'Event', 'Medal'])
 
     new_df = temp_df[temp_df['region'] == country]
     final_df = new_df.groupby('Year').count()['Medal'].reset_index()
 
     return final_df
 
-def country_event_heatmap(df,country):
+
+def country_event_heatmap(df, country):
     temp_df = df.dropna(subset=['Medal'])
-    temp_df.drop_duplicates(subset=['Team', 'NOC', 'Games', 'Year', 'City', 'Sport', 'Event', 'Medal'], inplace=True)
+    temp_df = temp_df.drop_duplicates(subset=['Team', 'NOC', 'Games', 'Year', 'City', 'Sport', 'Event', 'Medal'])
 
     new_df = temp_df[temp_df['region'] == country]
 
@@ -83,19 +86,21 @@ def most_successful_countrywise(df, country):
 
     temp_df = temp_df[temp_df['region'] == country]
 
-    x = temp_df['Name'].value_counts().reset_index().head(10).merge(df, left_on='index', right_on='Name', how='left')[
-        ['index', 'Name_x', 'Sport']].drop_duplicates('index')
-    x.rename(columns={'index': 'Name', 'Name_x': 'Medals'}, inplace=True)
+    x = temp_df['Name'].value_counts().reset_index().head(10)
+    x.columns = ['Name', 'Medals']
+    x = x.merge(df, on='Name', how='left')[['Name', 'Medals', 'Sport']].drop_duplicates('Name')
     return x
 
-def weight_v_height(df,sport):
-    athlete_df = df.drop_duplicates(subset=['Name', 'region'])
-    athlete_df['Medal'].fillna('No Medal', inplace=True)
+
+def weight_v_height(df, sport):
+    athlete_df = df.drop_duplicates(subset=['Name', 'region']).copy()
+    athlete_df['Medal'] = athlete_df['Medal'].fillna('No Medal')
     if sport != 'Overall':
         temp_df = athlete_df[athlete_df['Sport'] == sport]
         return temp_df
     else:
         return athlete_df
+
 
 def men_vs_women(df):
     athlete_df = df.drop_duplicates(subset=['Name', 'region'])
